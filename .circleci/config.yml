@@ -24,7 +24,7 @@ jobs:
       - checkout
       - run:
           name: Test
-          command: docker run -d --name redis redis:3.2
+          command: 'apt-get install netcat -y'
       - run:
           name: Generate code coverage
           command: 'nc -zv localhost 6379'
