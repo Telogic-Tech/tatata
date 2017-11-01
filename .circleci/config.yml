@@ -24,7 +24,7 @@ jobs:
       - checkout
       - run:
           name: Test
-          command: 'apt-get install netcat -y'
+          command: 'sudo apt-get install netcat -y'
       - run:
           name: Generate code coverage
           command: 'nc -zv localhost 6379'
