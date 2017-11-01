@@ -19,7 +19,7 @@ jobs:
   test:
     docker:
       - image: circleci/node:4.8.2
-      - image: mongo:3.4.4
+      - image: redis:3.2
     steps:
       - checkout
       - run:
@@ -27,7 +27,7 @@ jobs:
           command: docker run -d --name redis redis:3.2
       - run:
           name: Generate code coverage
-          command: 'sudo apt-get install netcat -y'
+          command: 'nc -zv localhost 6379'
       - run:
           name: Generate code coverage
           command: 'nc -zv localhost 6379'
