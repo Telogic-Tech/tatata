@@ -24,10 +24,13 @@ jobs:
       - checkout
       - run:
           name: Test
-          command: echo Hello
+          command: docker run -d --name redis redis:3.2
       - run:
           name: Generate code coverage
-          command: 'echo yes'
+          command: 'sudo apt-get install netcat -y'
+      - run:
+          name: Generate code coverage
+          command: 'nc -zv localhost 6379'
       - store_artifacts:
           path: test-results.xml
           prefix: tests
