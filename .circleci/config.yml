@@ -1,51 +1,43 @@
+defaults: &defaults
+  working_directory: /tmp
+  docker:
+    - image: buildpack-deps:jessie
+
 version: 2
 jobs:
-  build:
-    working_directory: ~/mern-starter
-    # The primary container is an instance of the first list image listed. Your build commands run in this container.
-    docker:
-      - image: circleci/node:4.8.2
-    # The secondary container is an instance of the second listed image which is run in a common network where ports exposed on the primary container are available on localhost.
-      - image: mongo:3.4.4
+  flow:
+    <<: *defaults
     steps:
-      - checkout
-      - run:
-          name: Update npm
-          command: 'sudo npm install -g npm@latest'
+      - run: mkdir -p workspace
+      - run: echo "Hello, world!" > workspace/echo-output
 
-      - run:
-          name: Install npm wee
-          command: npm install
-  test:
-    docker:
-      - image: circleci/node:4.8.2
-      - image: redis:3.2
+      - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory
+          root: workspace
+          # Must be relative path from root
+          paths:
+            - echo-output
+
+  downstream:
+    <<: *defaults
     steps:
-      - checkout
-      - run:
-          name: Test
-          command: 'sudo apt-get install netcat -y'
-      - run:
-          name: Generate code coverage
-          command: 'nc -zv localhost 6379'
-      - run:
-          name: Generate code coverage
-          command: 'nc -zv localhost 6379'
-      - store_artifacts:
-          path: test-results.xml
-          prefix: tests
-      - store_artifacts:
-          path: coverage
-          prefix: coverage
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: /tmp/workspace
+
+      - run: |
+          if [[ `cat /tmp/workspace/echo-output` == "Hello, world!" ]]; then
+            echo "It worked!";
+          else
+            echo "Nope!"; exit 1
+          fi
 
 workflows:
   version: 2
-  build_and_test:
+
+  btd:
     jobs:
-      - build
-      - test:
+      - flow
+      - downstream:
           requires:
-            - build
-          filters:
-            branches:
-              only: master
+            - flow
