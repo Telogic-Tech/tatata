@@ -18,7 +18,7 @@ jobs:
   downstream:
     working_directory: /tmp
     docker:
-    - image: buildpack-deps:jessie
+    - image: google/cloud-sdk
     steps:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
